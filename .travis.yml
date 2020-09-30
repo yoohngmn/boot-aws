@@ -13,7 +13,24 @@ cache:
 
 script: "./gradlew clean build"
 
+before_deploy:
+  - zip -r boot-aws *
+  - mkdir -p deploy
+  - mv boot-aws.zip deploy/boot-aws.zip
+
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: boot-aws-build
+    region: ap-northeast-2
+    skip_cleanup: true
+    acl: private
+    local_dir: deploy
+    wait-until-deploy: true
+
 notifications:
   email:
     recipients:
       - 'yoohngmn@gmail.com'
+
